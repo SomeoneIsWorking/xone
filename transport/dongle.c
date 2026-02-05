@@ -931,6 +931,12 @@ static ssize_t pair_store(struct device *dev, struct device_attribute *attr,
 	if (err)
 		return err;
 
+	if (enable)
+		mod_delayed_work(system_wq, &dongle->pairing_work,
+				 XONE_DONGLE_PAIRING_TIMEOUT);
+	else
+		cancel_delayed_work_sync(&dongle->pairing_work);
+
 	err = xone_dongle_toggle_pairing(dongle, enable);
 	if (err)
 		return err;
